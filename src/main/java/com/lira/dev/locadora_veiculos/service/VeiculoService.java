@@ -4,6 +4,7 @@ import com.lira.dev.locadora_veiculos.dto.request.AtualizarVeiculoDTO;
 import com.lira.dev.locadora_veiculos.dto.request.CriarVeiculoDTO;
 import com.lira.dev.locadora_veiculos.dto.response.VeiculoResponseDTO;
 import com.lira.dev.locadora_veiculos.entity.Veiculo;
+import com.lira.dev.locadora_veiculos.exception.VeiculoNotFoundException;
 import com.lira.dev.locadora_veiculos.repository.VeiculoRepository;
 import org.springframework.stereotype.Service;
 
@@ -78,7 +79,7 @@ public void deletarVeiculoPorId(Long id){
 
 
 public Veiculo buscarIdOuFalhar(Long id){
-    return veiculoRepository.findById(id).orElseThrow(() -> new RuntimeException("Veiculo de ID: " + id + " não encontrado."));
+    return veiculoRepository.findById(id).orElseThrow(() -> new VeiculoNotFoundException("Veiculo de ID: " + id + " não encontrado."));
 }
 
 public VeiculoResponseDTO returnResponseDTO(Veiculo veiculo){
