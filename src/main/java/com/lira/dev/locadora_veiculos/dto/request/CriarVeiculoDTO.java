@@ -16,13 +16,13 @@ import java.math.BigDecimal;
 public class CriarVeiculoDTO {
 
     @NotBlank(message = "A marca do veiculo é obrigatório.")
-    @Size(min = 5,
+    @Size(min = 2,
     max = 60,
     message = "Marca tem que ter no entre 5 e 60 caracteres.")
     private String marca;
 
     @NotBlank(message = "O modelo do veiculo é obrigatório.")
-    @Size(min = 5,
+    @Size(min = 2,
     max = 60,
     message = "Modelo tem que ter no entre 5 e 60 caracteres.")
     private String modelo;
@@ -39,7 +39,7 @@ public class CriarVeiculoDTO {
     private String placa;
 
     @NotBlank(message = "Cor do veiculo é obrigatória.")
-    @Size(min = 5,
+    @Size(min = 2,
     max = 30,
     message = "Cor deve ter entre 5 e 30 caracteres.")
     private String cor;
