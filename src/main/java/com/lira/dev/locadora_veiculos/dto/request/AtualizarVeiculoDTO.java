@@ -25,6 +25,6 @@ public class AtualizarVeiculoDTO {
     private BigDecimal valorDiaria;
 
     @NotNull(message = "O status de disponibilidade é obrigatório.")
-    private Boolean disponivel;
+    private boolean disponivel;
 
 }

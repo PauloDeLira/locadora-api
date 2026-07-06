@@ -2,11 +2,13 @@ package com.lira.dev.locadora_veiculos.dto.request;
 
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
+@Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
