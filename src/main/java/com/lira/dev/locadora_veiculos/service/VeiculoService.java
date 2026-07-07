@@ -82,7 +82,7 @@ public Veiculo buscarIdOuFalhar(Long id){
     return veiculoRepository.findById(id).orElseThrow(() -> new VeiculoNotFoundException("Veiculo de ID: " + id + " não encontrado."));
 }
 
-public VeiculoResponseDTO returnResponseDTO(Veiculo veiculo){
+public static VeiculoResponseDTO returnResponseDTO(Veiculo veiculo){
     return  VeiculoResponseDTO.builder()
             .id(veiculo.getId())
             .marca(veiculo.getMarca())
