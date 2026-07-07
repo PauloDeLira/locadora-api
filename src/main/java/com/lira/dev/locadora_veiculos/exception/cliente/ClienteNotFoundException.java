@@ -1,4 +1,4 @@
-package com.lira.dev.locadora_veiculos.exception;
+package com.lira.dev.locadora_veiculos.exception.cliente;
 
 public class ClienteNotFoundException extends RuntimeException {
     public ClienteNotFoundException(String message) {

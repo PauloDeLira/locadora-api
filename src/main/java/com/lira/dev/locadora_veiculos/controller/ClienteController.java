@@ -22,7 +22,6 @@ public class ClienteController {
     }
 
 
-
     @GetMapping
     public ResponseEntity<List<ClienteResponseDTO>> listarTodosClientes(){
         return ResponseEntity.ok(clienteService.listarTodosClientes());

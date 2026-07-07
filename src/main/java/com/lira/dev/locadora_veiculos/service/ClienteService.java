@@ -3,11 +3,8 @@ package com.lira.dev.locadora_veiculos.service;
 import com.lira.dev.locadora_veiculos.dto.request.AtualizarClienteDTO;
 import com.lira.dev.locadora_veiculos.dto.request.CriarClienteDTO;
 import com.lira.dev.locadora_veiculos.dto.response.ClienteResponseDTO;
-import com.lira.dev.locadora_veiculos.dto.response.VeiculoResponseDTO;
 import com.lira.dev.locadora_veiculos.entity.Cliente;
-import com.lira.dev.locadora_veiculos.entity.Veiculo;
-import com.lira.dev.locadora_veiculos.exception.ClienteNotFoundException;
-import com.lira.dev.locadora_veiculos.exception.VeiculoNotFoundException;
+import com.lira.dev.locadora_veiculos.exception.cliente.ClienteNotFoundException;
 import com.lira.dev.locadora_veiculos.repository.ClienteRepository;
 import org.springframework.stereotype.Service;
 
