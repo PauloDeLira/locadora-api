@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 
 public class VeiculoResponseDTO {
 
+    private Long id;
     private String marca;
     private String modelo;
     private Integer ano;

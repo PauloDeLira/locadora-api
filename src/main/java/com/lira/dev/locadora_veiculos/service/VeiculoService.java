@@ -84,6 +84,7 @@ public Veiculo buscarIdOuFalhar(Long id){
 
 public VeiculoResponseDTO returnResponseDTO(Veiculo veiculo){
     return  VeiculoResponseDTO.builder()
+            .id(veiculo.getId())
             .marca(veiculo.getMarca())
             .modelo(veiculo.getModelo())
             .ano(veiculo.getAno())
