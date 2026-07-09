@@ -4,7 +4,7 @@ import com.lira.dev.locadora_veiculos.dto.request.AtualizarVeiculoDTO;
 import com.lira.dev.locadora_veiculos.dto.request.CriarVeiculoDTO;
 import com.lira.dev.locadora_veiculos.dto.response.VeiculoResponseDTO;
 import com.lira.dev.locadora_veiculos.entity.Veiculo;
-import com.lira.dev.locadora_veiculos.exception.veiculo.VeiculoNotFoundException;
+import com.lira.dev.locadora_veiculos.exception.VeiculoNotFoundException;
 import com.lira.dev.locadora_veiculos.repository.VeiculoRepository;
 import org.springframework.stereotype.Service;
 

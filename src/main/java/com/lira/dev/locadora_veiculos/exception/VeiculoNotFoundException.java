@@ -1,4 +1,4 @@
-package com.lira.dev.locadora_veiculos.exception.veiculo;
+package com.lira.dev.locadora_veiculos.exception;
 
 public class VeiculoNotFoundException extends RuntimeException {
     public VeiculoNotFoundException(String message) {

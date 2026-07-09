@@ -1,22 +1,123 @@
 package com.lira.dev.locadora_veiculos.service;
 
+import com.lira.dev.locadora_veiculos.dto.request.CriarLocacaoDTO;
+import com.lira.dev.locadora_veiculos.dto.response.ClienteResponseDTO;
 import com.lira.dev.locadora_veiculos.dto.response.LocacaoResponseDTO;
+import com.lira.dev.locadora_veiculos.entity.Cliente;
+import com.lira.dev.locadora_veiculos.entity.Locacao;
+import com.lira.dev.locadora_veiculos.entity.Veiculo;
+import com.lira.dev.locadora_veiculos.enums.StatusLocacao;
+import com.lira.dev.locadora_veiculos.exception.BadRequestException;
+import com.lira.dev.locadora_veiculos.exception.ClienteNotFoundException;
+import com.lira.dev.locadora_veiculos.exception.LocacaoNotFoundException;
+import com.lira.dev.locadora_veiculos.exception.VeiculoNotFoundException;
+import com.lira.dev.locadora_veiculos.repository.ClienteRepository;
 import com.lira.dev.locadora_veiculos.repository.LocacaoRepository;
+import com.lira.dev.locadora_veiculos.repository.VeiculoRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 @Service
 public class LocacaoService {
 
     private final LocacaoRepository locacaoRepository;
 
-    public LocacaoService(LocacaoRepository locacaoRepository){
+    private final VeiculoRepository veiculoRepository;
+
+    private final ClienteRepository clienteRepository;
+
+    public LocacaoService(LocacaoRepository locacaoRepository,VeiculoRepository veiculoRepository,ClienteRepository clienteRepository){
         this.locacaoRepository = locacaoRepository;
+        this.veiculoRepository = veiculoRepository;
+        this.clienteRepository = clienteRepository;
     }
 
 
-    public LocacaoResponseDTO cadastrarLocacao(){
+    @Transactional
+    public LocacaoResponseDTO cadastrarLocacao(CriarLocacaoDTO request){
+        Cliente cliente = buscarClienteIdOuFalhar(request.getClienteId());
+        Veiculo veiculo = buscarVeiculoIdOuFalhar(request.getVeiculoId());
+        if (!veiculo.isDisponivel()){
+            throw new BadRequestException("Veiculo não está disponivel.");
+        }
 
+        boolean ePosterior = request.getDataPrevistaDevolucao().isAfter(request.getDataRetirada());
+        if(!ePosterior){
+            throw new BadRequestException("Data de devolução deve ser após a data de retirada. ");
+        }
+
+        long diferencaDeDias = ChronoUnit.DAYS.between(request.getDataRetirada(),request.getDataPrevistaDevolucao());
+
+        BigDecimal valorTotal = veiculo.getValorDiaria().multiply(BigDecimal.valueOf(diferencaDeDias));
+
+        Locacao locacao = Locacao.builder()
+                .dataRetirada(request.getDataRetirada())
+                .dataPrevistaDevolucao(request.getDataPrevistaDevolucao())
+                .valorTotal(valorTotal)
+                .status(StatusLocacao.ATIVA)
+                .cliente(cliente)
+                .veiculo(veiculo)
+                .build();
+
+        veiculo.setDisponivel(false);
+
+        Locacao locacaoNova = locacaoRepository.save(locacao);
+
+
+        return toResponseDTO(locacaoNova);
     }
+
+    @Transactional
+    public LocacaoResponseDTO devolverLocacao(Long id){
+        Locacao locacao = buscarLocacaoIdOuFalhar(id);
+
+        if (locacao.getStatus() != StatusLocacao.ATIVA){
+            throw new BadRequestException("Essa locação já foi finalizada ou cancelada, não é possivel devolver.");
+        }
+
+        locacao.setDataDevolucao(LocalDate.now());
+        locacao.setStatus(StatusLocacao.FINALIZADA);
+        locacao.getVeiculo().setDisponivel(true);
+
+        Locacao locacaoDevolvida = locacaoRepository.save(locacao);
+
+        return toResponseDTO(locacaoDevolvida);
+    }
+
+
+
+    public Cliente buscarClienteIdOuFalhar(Long id){
+        return clienteRepository.findById(id).orElseThrow(() -> new ClienteNotFoundException("Cliente de ID: " + id + " não encontrado."));
+    }
+
+    public Veiculo buscarVeiculoIdOuFalhar(Long id){
+        return veiculoRepository.findById(id).orElseThrow(() -> new VeiculoNotFoundException("Veiculo de ID: " + id + " não encontrado."));
+    }
+
+    public Locacao buscarLocacaoIdOuFalhar(Long id){
+        return locacaoRepository.findById(id).orElseThrow(() -> new LocacaoNotFoundException("Locação de ID: " + id + " não encontrado."));
+    }
+
+    public static LocacaoResponseDTO toResponseDTO(Locacao locacao){
+        return LocacaoResponseDTO.builder()
+                .id(locacao.getId())
+                .dataRetirada(locacao.getDataRetirada())
+                .dataPrevistaDevolucao(locacao.getDataPrevistaDevolucao())
+                .dataDevolucao(locacao.getDataDevolucao())
+                .valorTotal(locacao.getValorTotal())
+                .status(locacao.getStatus())
+                .clienteId(locacao.getCliente().getId())
+                .nomeCliente(locacao.getCliente().getNome())
+                .veiculoId(locacao.getVeiculo().getId())
+                .modeloVeiculo(locacao.getVeiculo().getModelo())
+                .placaVeiculo(locacao.getVeiculo().getPlaca())
+                .build();
+    }
+
 
 
 }
