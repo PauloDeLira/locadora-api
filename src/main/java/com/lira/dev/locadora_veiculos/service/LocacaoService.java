@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 @Service
 public class LocacaoService {
@@ -51,6 +52,10 @@ public class LocacaoService {
         }
 
         long diferencaDeDias = ChronoUnit.DAYS.between(request.getDataRetirada(),request.getDataPrevistaDevolucao());
+
+        if(diferencaDeDias <= 0){
+            diferencaDeDias = 1;
+        }
 
         BigDecimal valorTotal = veiculo.getValorDiaria().multiply(BigDecimal.valueOf(diferencaDeDias));
 
@@ -87,6 +92,47 @@ public class LocacaoService {
 
         return toResponseDTO(locacaoDevolvida);
     }
+
+    @Transactional
+    public LocacaoResponseDTO cancelarLocacao(Long id){
+        Locacao locacao = buscarLocacaoIdOuFalhar(id);
+
+        if(locacao.getStatus() != StatusLocacao.ATIVA){
+            throw new BadRequestException("Não é possivel cancelar uma Locacao já finalizada ou cancelada.");
+        }
+
+        if (LocalDate.now().isAfter(locacao.getDataPrevistaDevolucao())){
+            throw new BadRequestException("Não é possível cancelar uma locação após a data prevista de devolução");
+        }
+
+        locacao.setStatus(StatusLocacao.CANCELADA);
+        locacao.getVeiculo().setDisponivel(true);
+
+        long diasUtilizados = ChronoUnit.DAYS.between(locacao.getDataRetirada(),LocalDate.now());
+        if (diasUtilizados <= 0){
+            diasUtilizados = 1;
+        }
+
+        locacao.setValorTotal(locacao.getVeiculo().getValorDiaria().multiply(BigDecimal.valueOf(diasUtilizados)));
+
+        Locacao locacaoCancelada = locacaoRepository.save(locacao);
+
+        return toResponseDTO(locacaoCancelada);
+
+    }
+
+
+    public List<LocacaoResponseDTO> listarLocacoes(){
+        return locacaoRepository.findAll()
+                .stream()
+                .map(LocacaoService::toResponseDTO)
+                .toList();
+    }
+
+    public LocacaoResponseDTO listarLocacaoPorId(Long id){
+        return toResponseDTO(buscarLocacaoIdOuFalhar(id));
+    }
+
 
 
 
