@@ -5,6 +5,7 @@ import com.lira.dev.locadora_veiculos.dto.request.CriarClienteDTO;
 import com.lira.dev.locadora_veiculos.dto.response.ClienteResponseDTO;
 import com.lira.dev.locadora_veiculos.entity.Cliente;
 import com.lira.dev.locadora_veiculos.exception.ClienteNotFoundException;
+import com.lira.dev.locadora_veiculos.mapper.ClienteMapper;
 import com.lira.dev.locadora_veiculos.repository.ClienteRepository;
 import org.springframework.stereotype.Service;
 
@@ -14,9 +15,11 @@ import java.util.List;
 public class ClienteService {
 
     private final ClienteRepository clienteRepository;
+    private final ClienteMapper clienteMapper;
 
-    public ClienteService(ClienteRepository clienteRepository){
+    public ClienteService(ClienteRepository clienteRepository,ClienteMapper clienteMapper){
         this.clienteRepository = clienteRepository;
+        this.clienteMapper = clienteMapper;
     }
 
     public List<ClienteResponseDTO> listarTodosClientes(){
@@ -33,7 +36,7 @@ public class ClienteService {
 
     public ClienteResponseDTO listarClientePorId(Long id){
         Cliente cliente = buscarIdOuFalhar(id);
-        return returnResponseDTO(cliente);
+        return clienteMapper.toResponseDTO(cliente);
     }
 
 
@@ -48,7 +51,7 @@ public class ClienteService {
 
         Cliente novoCliente = clienteRepository.save(cliente);
 
-        return returnResponseDTO(novoCliente);
+        return clienteMapper.toResponseDTO(novoCliente);
     }
 
 
@@ -60,7 +63,7 @@ public class ClienteService {
 
         Cliente clienteAtualizado = clienteRepository.save(cliente);
 
-        return returnResponseDTO(clienteAtualizado);
+        return clienteMapper.toResponseDTO(clienteAtualizado);
     }
 
     public void deletarClientePorId(Long id){
@@ -73,14 +76,6 @@ public class ClienteService {
         return clienteRepository.findById(id).orElseThrow(() -> new ClienteNotFoundException("Cliente de ID: " + id + " não encontrado."));
     }
 
-    public static ClienteResponseDTO returnResponseDTO(Cliente cliente){
-        return  ClienteResponseDTO.builder()
-                .id(cliente.getId())
-                .nome(cliente.getNome())
-                .email(cliente.getEmail())
-                .telefone(cliente.getTelefone())
-                .build();
 
-    }
 
 }

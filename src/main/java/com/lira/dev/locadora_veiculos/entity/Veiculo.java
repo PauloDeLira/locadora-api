@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Builder
 @Data
@@ -29,5 +31,6 @@ public class Veiculo {
     private BigDecimal valorDiaria;
     private boolean disponivel;
 
-
+    @OneToMany(mappedBy = "veiculo")
+    private List<Locacao> locacoes = new ArrayList<>();
 }

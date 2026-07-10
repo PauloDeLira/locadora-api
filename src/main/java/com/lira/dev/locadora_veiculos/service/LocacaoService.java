@@ -1,7 +1,6 @@
 package com.lira.dev.locadora_veiculos.service;
 
 import com.lira.dev.locadora_veiculos.dto.request.CriarLocacaoDTO;
-import com.lira.dev.locadora_veiculos.dto.response.ClienteResponseDTO;
 import com.lira.dev.locadora_veiculos.dto.response.LocacaoResponseDTO;
 import com.lira.dev.locadora_veiculos.entity.Cliente;
 import com.lira.dev.locadora_veiculos.entity.Locacao;
@@ -11,6 +10,7 @@ import com.lira.dev.locadora_veiculos.exception.BadRequestException;
 import com.lira.dev.locadora_veiculos.exception.ClienteNotFoundException;
 import com.lira.dev.locadora_veiculos.exception.LocacaoNotFoundException;
 import com.lira.dev.locadora_veiculos.exception.VeiculoNotFoundException;
+import com.lira.dev.locadora_veiculos.mapper.LocacaoMapper;
 import com.lira.dev.locadora_veiculos.repository.ClienteRepository;
 import com.lira.dev.locadora_veiculos.repository.LocacaoRepository;
 import com.lira.dev.locadora_veiculos.repository.VeiculoRepository;
@@ -26,15 +26,16 @@ import java.util.List;
 public class LocacaoService {
 
     private final LocacaoRepository locacaoRepository;
-
+    private final LocacaoMapper locacaoMapper;
     private final VeiculoRepository veiculoRepository;
-
     private final ClienteRepository clienteRepository;
 
-    public LocacaoService(LocacaoRepository locacaoRepository,VeiculoRepository veiculoRepository,ClienteRepository clienteRepository){
+
+    public LocacaoService(LocacaoRepository locacaoRepository,VeiculoRepository veiculoRepository,ClienteRepository clienteRepository,LocacaoMapper locacaoMapper){
         this.locacaoRepository = locacaoRepository;
         this.veiculoRepository = veiculoRepository;
         this.clienteRepository = clienteRepository;
+        this.locacaoMapper = locacaoMapper;
     }
 
 
@@ -73,7 +74,7 @@ public class LocacaoService {
         Locacao locacaoNova = locacaoRepository.save(locacao);
 
 
-        return toResponseDTO(locacaoNova);
+        return locacaoMapper.toResponseDTO(locacaoNova);
     }
 
     @Transactional
@@ -90,7 +91,7 @@ public class LocacaoService {
 
         Locacao locacaoDevolvida = locacaoRepository.save(locacao);
 
-        return toResponseDTO(locacaoDevolvida);
+        return locacaoMapper.toResponseDTO(locacaoDevolvida);
     }
 
     @Transactional
@@ -117,7 +118,7 @@ public class LocacaoService {
 
         Locacao locacaoCancelada = locacaoRepository.save(locacao);
 
-        return toResponseDTO(locacaoCancelada);
+        return locacaoMapper.toResponseDTO(locacaoCancelada);
 
     }
 
@@ -125,44 +126,28 @@ public class LocacaoService {
     public List<LocacaoResponseDTO> listarLocacoes(){
         return locacaoRepository.findAll()
                 .stream()
-                .map(LocacaoService::toResponseDTO)
+                .map(locacaoMapper::toResponseDTO)
                 .toList();
     }
 
     public LocacaoResponseDTO listarLocacaoPorId(Long id){
-        return toResponseDTO(buscarLocacaoIdOuFalhar(id));
+        return locacaoMapper.toResponseDTO(buscarLocacaoIdOuFalhar(id));
     }
 
 
-
-
-    public Cliente buscarClienteIdOuFalhar(Long id){
+    private Cliente buscarClienteIdOuFalhar(Long id){
         return clienteRepository.findById(id).orElseThrow(() -> new ClienteNotFoundException("Cliente de ID: " + id + " não encontrado."));
     }
 
-    public Veiculo buscarVeiculoIdOuFalhar(Long id){
+    private Veiculo buscarVeiculoIdOuFalhar(Long id){
         return veiculoRepository.findById(id).orElseThrow(() -> new VeiculoNotFoundException("Veiculo de ID: " + id + " não encontrado."));
     }
 
-    public Locacao buscarLocacaoIdOuFalhar(Long id){
+    private Locacao buscarLocacaoIdOuFalhar(Long id){
         return locacaoRepository.findById(id).orElseThrow(() -> new LocacaoNotFoundException("Locação de ID: " + id + " não encontrado."));
     }
 
-    public static LocacaoResponseDTO toResponseDTO(Locacao locacao){
-        return LocacaoResponseDTO.builder()
-                .id(locacao.getId())
-                .dataRetirada(locacao.getDataRetirada())
-                .dataPrevistaDevolucao(locacao.getDataPrevistaDevolucao())
-                .dataDevolucao(locacao.getDataDevolucao())
-                .valorTotal(locacao.getValorTotal())
-                .status(locacao.getStatus())
-                .clienteId(locacao.getCliente().getId())
-                .nomeCliente(locacao.getCliente().getNome())
-                .veiculoId(locacao.getVeiculo().getId())
-                .modeloVeiculo(locacao.getVeiculo().getModelo())
-                .placaVeiculo(locacao.getVeiculo().getPlaca())
-                .build();
-    }
+
 
 
 

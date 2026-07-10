@@ -5,6 +5,7 @@ import com.lira.dev.locadora_veiculos.dto.request.CriarVeiculoDTO;
 import com.lira.dev.locadora_veiculos.dto.response.VeiculoResponseDTO;
 import com.lira.dev.locadora_veiculos.entity.Veiculo;
 import com.lira.dev.locadora_veiculos.exception.VeiculoNotFoundException;
+import com.lira.dev.locadora_veiculos.mapper.VeiculoMapper;
 import com.lira.dev.locadora_veiculos.repository.VeiculoRepository;
 import org.springframework.stereotype.Service;
 
@@ -14,10 +15,11 @@ import java.util.List;
 public class VeiculoService {
 
 private final VeiculoRepository veiculoRepository;
+private final VeiculoMapper veiculoMapper;
 
-
-public VeiculoService(VeiculoRepository veiculoRepository){
+public VeiculoService(VeiculoRepository veiculoRepository,VeiculoMapper veiculoMapper){
     this.veiculoRepository = veiculoRepository;
+    this.veiculoMapper = veiculoMapper;
 }
 
 public List<VeiculoResponseDTO> listarTodosVeiculos(){
@@ -37,7 +39,7 @@ public List<VeiculoResponseDTO> listarTodosVeiculos(){
 
 public VeiculoResponseDTO listarVeiculoPorId(Long id){
     Veiculo veiculo = buscarIdOuFalhar(id);
-    return returnResponseDTO(veiculo);
+    return veiculoMapper.toResponseDTO(veiculo);
 }
 
 
@@ -54,7 +56,7 @@ public VeiculoResponseDTO cadastrarVeiculo(CriarVeiculoDTO request){
 
     Veiculo veiculoNovo = veiculoRepository.save(veiculo);
 
-    return returnResponseDTO(veiculoNovo);
+    return veiculoMapper.toResponseDTO(veiculoNovo);
 }
 
 public VeiculoResponseDTO atualizarVeiculoPorId(Long id, AtualizarVeiculoDTO request){
@@ -66,7 +68,7 @@ public VeiculoResponseDTO atualizarVeiculoPorId(Long id, AtualizarVeiculoDTO req
 
     Veiculo veiculoAtualizado = veiculoRepository.save(veiculo);
 
-    return returnResponseDTO(veiculoAtualizado);
+    return veiculoMapper.toResponseDTO(veiculoAtualizado);
 
 }
 
@@ -77,22 +79,9 @@ public void deletarVeiculoPorId(Long id){
 }
 
 
-
-
 public Veiculo buscarIdOuFalhar(Long id){
     return veiculoRepository.findById(id).orElseThrow(() -> new VeiculoNotFoundException("Veiculo de ID: " + id + " não encontrado."));
 }
 
-public static VeiculoResponseDTO returnResponseDTO(Veiculo veiculo){
-    return  VeiculoResponseDTO.builder()
-            .id(veiculo.getId())
-            .marca(veiculo.getMarca())
-            .modelo(veiculo.getModelo())
-            .ano(veiculo.getAno())
-            .cor(veiculo.getCor())
-            .valorDiaria(veiculo.getValorDiaria())
-            .disponivel(veiculo.isDisponivel())
-            .build();
 
-}
 }
