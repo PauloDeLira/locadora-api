@@ -68,6 +68,13 @@ public List<VeiculoResponseDTO> buscarVeiculosPorModelo(String modelo){
             .toList();
 }
 
+public List<VeiculoResponseDTO> buscarVeiculosDisponiveisPorPreco(){
+        return veiculoRepository.findByVeiculosDisponiveisPorPreco()
+                .stream()
+                .map(veiculoMapper::toResponseDTO)
+                .toList();
+}
+
 public VeiculoResponseDTO cadastrarVeiculo(CriarVeiculoDTO request){
     Veiculo veiculo = Veiculo.builder()
             .marca(request.getMarca())
