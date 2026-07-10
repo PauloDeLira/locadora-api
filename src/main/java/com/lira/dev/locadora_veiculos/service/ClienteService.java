@@ -39,6 +39,18 @@ public class ClienteService {
         return clienteMapper.toResponseDTO(cliente);
     }
 
+    public List<ClienteResponseDTO> listarClientesPorNome(String nome){
+        return clienteRepository.findByNomeIgnoreCaseContaining(nome)
+                .stream()
+                .map(clienteMapper::toResponseDTO)
+                .toList();
+    }
+
+    public ClienteResponseDTO listarClientePorCpf(String cpf){
+        Cliente cliente = buscarCpfOuFalhar(cpf);
+        return clienteMapper.toResponseDTO(cliente);
+    }
+
 
     public ClienteResponseDTO cadastrarCliente(CriarClienteDTO request){
         Cliente cliente = Cliente.builder()
@@ -76,6 +88,9 @@ public class ClienteService {
         return clienteRepository.findById(id).orElseThrow(() -> new ClienteNotFoundException("Cliente de ID: " + id + " não encontrado."));
     }
 
+    public Cliente buscarCpfOuFalhar(String cpf){
+        return clienteRepository.findByCpf(cpf).orElseThrow(() -> new ClienteNotFoundException("Cliente de CPF: " + cpf + " não encontrado."));
+    }
 
 
 }

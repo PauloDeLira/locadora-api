@@ -134,6 +134,21 @@ public class LocacaoService {
         return locacaoMapper.toResponseDTO(buscarLocacaoIdOuFalhar(id));
     }
 
+    public List<LocacaoResponseDTO> buscarLocacoesPorCliente(Long clienteid){
+        return locacaoRepository.findByClienteId(clienteid)
+                .stream()
+                .map(locacaoMapper::toResponseDTO)
+                .toList();
+    }
+
+    public List<LocacaoResponseDTO> buscarLocacoesPorStatus(StatusLocacao status){
+        return locacaoRepository.findByStatus(status)
+                .stream()
+                .map(locacaoMapper::toResponseDTO)
+                .toList();
+    }
+
+
 
     private Cliente buscarClienteIdOuFalhar(Long id){
         return clienteRepository.findById(id).orElseThrow(() -> new ClienteNotFoundException("Cliente de ID: " + id + " não encontrado."));
