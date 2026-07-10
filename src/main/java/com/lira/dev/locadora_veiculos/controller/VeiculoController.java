@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@SuppressWarnings("NullableProblems")
 @RestController
 @RequestMapping("/veiculos")
 public class VeiculoController {
@@ -28,9 +29,34 @@ public class VeiculoController {
         return ResponseEntity.ok(veiculoService.listarTodosVeiculos());
     }
 
+    @GetMapping("/disponiveis")
+    public ResponseEntity<List<VeiculoResponseDTO>> buscarVeiculosDisponiveis(){
+        return ResponseEntity.ok().body(veiculoService.buscarVeiculosDisponiveis());
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<VeiculoResponseDTO> listarVeiculoPorId(@PathVariable Long id){
         return ResponseEntity.ok(veiculoService.listarVeiculoPorId(id));
+    }
+
+    @GetMapping ("/placa/{placa}")
+    public ResponseEntity<VeiculoResponseDTO>buscarVeiculoPorPlaca(@PathVariable String placa){
+        return ResponseEntity.ok().body(veiculoService.buscarVeiculoPorPlaca(placa));
+    }
+
+    @GetMapping("/marca/{marca}")
+    public ResponseEntity<List<VeiculoResponseDTO>> buscarVeiculosPorMarca(@PathVariable String marca){
+        return ResponseEntity.ok().body(veiculoService.buscarVeiculosPorMarca(marca));
+    }
+
+    @GetMapping("/modelo/{modelo}")
+    public ResponseEntity<List<VeiculoResponseDTO>> buscarVeiculosPorModelo(@PathVariable String modelo){
+        return ResponseEntity.ok().body(veiculoService.buscarVeiculosPorModelo(modelo));
+    }
+
+    @GetMapping("/disponiveis/order/preco")
+    public ResponseEntity<List<VeiculoResponseDTO>> buscarVeiculosDisponiveisPorPreco(){
+        return ResponseEntity.ok().body(veiculoService.buscarVeiculosDisponiveisPorPreco());
     }
 
     @PostMapping
