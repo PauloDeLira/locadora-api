@@ -42,6 +42,31 @@ public VeiculoResponseDTO listarVeiculoPorId(Long id){
     return veiculoMapper.toResponseDTO(veiculo);
 }
 
+public VeiculoResponseDTO buscarVeiculoPorPlaca(String placa){
+    Veiculo veiculo = buscarPlacaOuFalhar(placa);
+    return veiculoMapper.toResponseDTO(veiculo);
+}
+
+public List<VeiculoResponseDTO> buscarVeiculosDisponiveis(){
+    return veiculoRepository.findByDisponivelTrue()
+            .stream()
+            .map(veiculoMapper::toResponseDTO)
+            .toList();
+}
+
+public List<VeiculoResponseDTO> buscarVeiculosPorMarca(String marca){
+    return veiculoRepository.findByMarcaIgnoreCase(marca)
+            .stream()
+            .map(veiculoMapper::toResponseDTO)
+            .toList();
+}
+
+public List<VeiculoResponseDTO> buscarVeiculosPorModelo(String modelo){
+    return veiculoRepository.findByModeloIgnoreCase(modelo)
+            .stream()
+            .map(veiculoMapper::toResponseDTO)
+            .toList();
+}
 
 public VeiculoResponseDTO cadastrarVeiculo(CriarVeiculoDTO request){
     Veiculo veiculo = Veiculo.builder()
@@ -83,5 +108,8 @@ public Veiculo buscarIdOuFalhar(Long id){
     return veiculoRepository.findById(id).orElseThrow(() -> new VeiculoNotFoundException("Veiculo de ID: " + id + " não encontrado."));
 }
 
+public Veiculo buscarPlacaOuFalhar(String placa){
+    return veiculoRepository.findByPlaca(placa).orElseThrow(() -> new VeiculoNotFoundException("Veiculo com placa: " + placa + " não encontrado."));
+}
 
 }
