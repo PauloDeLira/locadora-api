@@ -15,6 +15,8 @@ import com.lira.dev.locadora_veiculos.repository.ClienteRepository;
 import com.lira.dev.locadora_veiculos.repository.LocacaoRepository;
 import com.lira.dev.locadora_veiculos.repository.VeiculoRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -148,6 +150,9 @@ public class LocacaoService {
                 .toList();
     }
 
+    public Page<LocacaoResponseDTO> buscarLocacoesPaginadas(Pageable pageable){
+        return locacaoRepository.findAll(pageable).map(locacaoMapper::toResponseDTO);
+    }
 
 
     private Cliente buscarClienteIdOuFalhar(Long id){

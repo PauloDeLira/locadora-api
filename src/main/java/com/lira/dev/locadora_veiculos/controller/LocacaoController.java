@@ -4,6 +4,8 @@ import com.lira.dev.locadora_veiculos.dto.request.CriarLocacaoDTO;
 import com.lira.dev.locadora_veiculos.dto.response.LocacaoResponseDTO;
 import com.lira.dev.locadora_veiculos.service.LocacaoService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -43,6 +45,11 @@ public class LocacaoController {
     @GetMapping("/{id}")
     public ResponseEntity<LocacaoResponseDTO> buscarLocacaoPorId(@PathVariable Long id){
         return ResponseEntity.ok().body(locacaoService.listarLocacaoPorId(id));
+    }
+
+    @GetMapping("/page")
+    public ResponseEntity<Page<LocacaoResponseDTO>> buscarLocacoesPaginadas(Pageable pageable){
+        return ResponseEntity.ok().body(locacaoService.buscarLocacoesPaginadas(pageable));
     }
 
 

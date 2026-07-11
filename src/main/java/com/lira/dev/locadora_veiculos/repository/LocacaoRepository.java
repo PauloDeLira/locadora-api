@@ -2,6 +2,8 @@ package com.lira.dev.locadora_veiculos.repository;
 
 import com.lira.dev.locadora_veiculos.entity.Locacao;
 import com.lira.dev.locadora_veiculos.enums.StatusLocacao;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,4 +16,5 @@ public interface LocacaoRepository extends JpaRepository<Locacao, Long> {
 
     public List<Locacao> findByStatus(StatusLocacao status);
 
+    public Page<Locacao> findAll(Pageable pageable);
 }

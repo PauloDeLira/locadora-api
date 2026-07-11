@@ -61,7 +61,7 @@ public class VeiculoController {
         return ResponseEntity.ok().body(veiculoService.buscarVeiculosDisponiveisPorPreco());
     }
 
-    @GetMapping("/paginados")
+    @GetMapping("/page")
     public ResponseEntity<Page<VeiculoResponseDTO>>buscarVeiculosPaginados(Pageable pageable){
         return ResponseEntity.ok().body(veiculoService.buscarVeiculosPaginados(pageable));
     }
