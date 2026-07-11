@@ -6,6 +6,8 @@ import com.lira.dev.locadora_veiculos.dto.request.CriarVeiculoDTO;
 import com.lira.dev.locadora_veiculos.dto.response.VeiculoResponseDTO;
 import com.lira.dev.locadora_veiculos.service.VeiculoService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -57,6 +59,11 @@ public class VeiculoController {
     @GetMapping("/disponiveis/order/preco")
     public ResponseEntity<List<VeiculoResponseDTO>> buscarVeiculosDisponiveisPorPreco(){
         return ResponseEntity.ok().body(veiculoService.buscarVeiculosDisponiveisPorPreco());
+    }
+
+    @GetMapping("/paginados")
+    public ResponseEntity<Page<VeiculoResponseDTO>>buscarVeiculosPaginados(Pageable pageable){
+        return ResponseEntity.ok().body(veiculoService.buscarVeiculosPaginados(pageable));
     }
 
     @PostMapping

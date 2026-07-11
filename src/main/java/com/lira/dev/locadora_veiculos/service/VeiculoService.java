@@ -7,6 +7,8 @@ import com.lira.dev.locadora_veiculos.entity.Veiculo;
 import com.lira.dev.locadora_veiculos.exception.VeiculoNotFoundException;
 import com.lira.dev.locadora_veiculos.mapper.VeiculoMapper;
 import com.lira.dev.locadora_veiculos.repository.VeiculoRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -73,6 +75,10 @@ public List<VeiculoResponseDTO> buscarVeiculosDisponiveisPorPreco(){
                 .stream()
                 .map(veiculoMapper::toResponseDTO)
                 .toList();
+}
+
+public Page<VeiculoResponseDTO> buscarVeiculosPaginados(Pageable pageable){
+    return veiculoRepository.findAll(pageable).map(veiculoMapper::toResponseDTO);
 }
 
 public VeiculoResponseDTO cadastrarVeiculo(CriarVeiculoDTO request){
