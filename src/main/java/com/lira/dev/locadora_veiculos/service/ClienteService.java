@@ -7,6 +7,8 @@ import com.lira.dev.locadora_veiculos.entity.Cliente;
 import com.lira.dev.locadora_veiculos.exception.ClienteNotFoundException;
 import com.lira.dev.locadora_veiculos.mapper.ClienteMapper;
 import com.lira.dev.locadora_veiculos.repository.ClienteRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -49,6 +51,10 @@ public class ClienteService {
     public ClienteResponseDTO listarClientePorCpf(String cpf){
         Cliente cliente = buscarCpfOuFalhar(cpf);
         return clienteMapper.toResponseDTO(cliente);
+    }
+
+    public Page<ClienteResponseDTO> listarClientesPaginados(Pageable pageable){
+        return clienteRepository.findAll(pageable).map(clienteMapper::toResponseDTO);
     }
 
 

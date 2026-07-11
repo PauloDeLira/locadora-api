@@ -5,6 +5,8 @@ import com.lira.dev.locadora_veiculos.dto.request.CriarClienteDTO;
 import com.lira.dev.locadora_veiculos.dto.response.ClienteResponseDTO;
 import com.lira.dev.locadora_veiculos.service.ClienteService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +32,11 @@ public class ClienteController {
     @GetMapping("/{id}")
     public ResponseEntity<ClienteResponseDTO> listarClientePorId(@PathVariable Long id){
         return ResponseEntity.ok(clienteService.listarClientePorId(id));
+    }
+
+    @GetMapping("/page")
+    public ResponseEntity<Page<ClienteResponseDTO>> listarClientesPaginados(Pageable pageable){
+        return ResponseEntity.ok().body(clienteService.listarClientesPaginados(pageable));
     }
 
     @PostMapping
