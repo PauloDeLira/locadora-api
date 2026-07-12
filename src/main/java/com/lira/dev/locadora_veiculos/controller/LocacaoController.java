@@ -2,7 +2,13 @@ package com.lira.dev.locadora_veiculos.controller;
 
 import com.lira.dev.locadora_veiculos.dto.request.CriarLocacaoDTO;
 import com.lira.dev.locadora_veiculos.dto.response.LocacaoResponseDTO;
+import com.lira.dev.locadora_veiculos.exception.ErrorResponse;
 import com.lira.dev.locadora_veiculos.service.LocacaoService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +28,14 @@ public class LocacaoController {
         this.locacaoService = locacaoService;
     }
 
+    @Operation(
+    summary = "Cadastrar uma nova locação.",
+    description = "Cria uma locação para um cliente utilizando um veiculo disponivel, calcula o valor total a ser pago, altera o veiculo utilizado para indisponivel e muda o status da locação para ATIVA.")
+    @ApiResponses({
+    @ApiResponse(responseCode = "201",description = "Locação criada com sucesso."),
+    @ApiResponse(responseCode = "400",description = "Dados invalidos ou veículo indisponivel"),
+    @ApiResponse(responseCode = "404",description = "Cliente ou Veiculo não encontrado.",content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
     @PostMapping
     public ResponseEntity<LocacaoResponseDTO> cadastrarLocacao(@RequestBody @Valid CriarLocacaoDTO dto){
         return ResponseEntity.status(HttpStatus.CREATED).body(locacaoService.cadastrarLocacao(dto));
