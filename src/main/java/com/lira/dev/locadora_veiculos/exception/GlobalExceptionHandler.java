@@ -28,6 +28,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
+    @ExceptionHandler(UsuarioNotFoundException.class)
+    public ResponseEntity<ErrorResponse>usuarioNotFoundHandler(UsuarioNotFoundException ex){
+        ErrorResponse error = new ErrorResponse(ex.getMessage(),404,LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<ErrorResponse> badRequestHandler(BadRequestException ex){
         ErrorResponse erro = new ErrorResponse(ex.getMessage(),400, LocalDateTime.now());
