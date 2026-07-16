@@ -1,5 +1,6 @@
 package com.lira.dev.locadora_veiculos.mapper;
 
+import com.lira.dev.locadora_veiculos.dto.request.CriarVeiculoDTO;
 import com.lira.dev.locadora_veiculos.dto.response.VeiculoResponseDTO;
 import com.lira.dev.locadora_veiculos.entity.Veiculo;
 import org.springframework.stereotype.Component;
@@ -19,5 +20,20 @@ public class VeiculoMapper {
                 .build();
 
     }
+
+    public Veiculo toEntity(CriarVeiculoDTO dto){
+        return Veiculo.builder()
+                .modelo(dto.getModelo())
+                .marca(dto.getMarca())
+                .ano(dto.getAno())
+                .cor(dto.getCor())
+                .placa(dto.getPlaca())
+                .valorDiaria(dto.getValorDiaria())
+                .disponivel(dto.isDisponivel())
+                .build();
+    }
+
+
+
 
 }
