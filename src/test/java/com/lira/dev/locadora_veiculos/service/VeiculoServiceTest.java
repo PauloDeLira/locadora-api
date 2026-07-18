@@ -3,6 +3,7 @@ package com.lira.dev.locadora_veiculos.service;
 import com.lira.dev.locadora_veiculos.dto.request.CriarVeiculoDTO;
 import com.lira.dev.locadora_veiculos.dto.response.VeiculoResponseDTO;
 import com.lira.dev.locadora_veiculos.entity.Veiculo;
+import com.lira.dev.locadora_veiculos.exception.VeiculoNotFoundException;
 import com.lira.dev.locadora_veiculos.mapper.VeiculoMapper;
 import com.lira.dev.locadora_veiculos.repository.VeiculoRepository;
 import org.junit.jupiter.api.Test;
@@ -12,10 +13,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class VeiculoServiceTest {
@@ -78,4 +80,81 @@ class VeiculoServiceTest {
         assertEquals(new BigDecimal("200.00"), resultado.getValorDiaria());
         assertTrue(resultado.isDisponivel());
     }
+
+    @Test
+    void deveBuscarVeiculoPorId(){
+
+        Veiculo veiculo = Veiculo.builder()
+                .id(1L)
+                .marca("Chevrolet")
+                .modelo("Onix")
+                .ano(2021)
+                .placa("ABC0B23")
+                .cor("Prata")
+                .valorDiaria(new BigDecimal("200.00"))
+                .disponivel(true)
+                .build();
+
+        when(veiculoRepository.findById(1L))
+                .thenReturn(Optional.of(veiculo));
+
+        Veiculo veiculoRetornado = veiculoService.buscarIdOuFalhar(1L);
+
+        assertNotNull(veiculoRetornado);
+        assertEquals("Onix",veiculoRetornado.getModelo());
+        assertEquals(1L,veiculoRetornado.getId());
+        verify(veiculoRepository).findById(1L);
+    }
+
+
+    @Test
+    void deveLancarExcecaoQuandoIdNaoExistir(){
+
+        Long idInexistente = 2L;
+
+        when(veiculoRepository.findById(idInexistente))
+                .thenReturn(Optional.empty());
+
+
+        VeiculoNotFoundException exception = assertThrows(VeiculoNotFoundException.class,
+                () -> veiculoService.buscarIdOuFalhar(idInexistente));
+
+        assertEquals(
+                "Veiculo de ID: 2 não encontrado.",
+                exception.getMessage()
+        );
+
+        verify(veiculoRepository).findById(idInexistente);
+
+    }
+
+
+    @Test
+    void deveDeletarVeiculoComSucesso(){
+
+        Veiculo veiculo = Veiculo.builder()
+                .id(1L)
+                .marca("Chevrolet")
+                .modelo("Onix")
+                .ano(2021)
+                .placa("ABC0B23")
+                .cor("Prata")
+                .valorDiaria(new BigDecimal("200.00"))
+                .disponivel(true)
+                .build();
+
+
+        when(veiculoRepository.findById(1L)).thenReturn(Optional.of(veiculo));
+        veiculoService.deletarVeiculoPorId(1L);
+
+
+        verify(veiculoRepository,times(1)).delete(veiculo);
+
+
+    }
+
+
+
+
+
 }
