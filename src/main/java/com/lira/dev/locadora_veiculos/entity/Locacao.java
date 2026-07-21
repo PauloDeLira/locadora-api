@@ -27,6 +27,8 @@ public class Locacao {
     private LocalDate dataPrevistaDevolucao;
     private LocalDate dataDevolucao;
     private BigDecimal valorTotal;
+
+    @Enumerated(EnumType.STRING)
     private StatusLocacao status;
 
     @ManyToOne
